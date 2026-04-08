@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .ansible-logo {
+            color: #ee0000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ app_name }}</h1>
+        <p>Deployed with <span class="ansible-logo">Ansible</span> ❤️</p>
+    </div>
+    
+    <div class="info-box">
+        <h2>Server Information</h2>
+        <ul>
+            <li><strong>Hostname:</strong> {{ ansible_hostname }}</li>
+            <li><strong>Operating System:</strong> {{ ansible_distribution }} {{ ansible_distribution_version }}</li>
+            <li><strong>Architecture:</strong> {{ ansible_architecture }}</li>
+            <li><strong>Private IP:</strong> {{ ansible_default_ipv4.address }}</li>
+            <li><strong>Environment:</strong> {{ demo_environment }}</li>
+            <li><strong>App Version:</strong> {{ app_version }}</li>
+        </ul>
+    </div>
+    
+    <div class="info-box">
+        <h2>Ansible Demo Features</h2>
+        <ul>
+            <li>✅ Package Management (yum)</li>
+            <li>✅ Service Management (systemd)</li>
+            <li>✅ File Management</li>
+            <li>✅ Template Engine (Jinja2)</li>
+            <li>✅ Variables & Facts</li>
+            <li>✅ Handlers</li>
+            <li>✅ Tags</li>
+            <li>✅ Conditionals</li>
+        </ul>
+    </div>
+    
+    <div class="info-box">
+        <h2>Links</h2>
+        <ul>
+            <li><a href="/info.html">System Information</a></li>
+        </ul>
+    </div>
+    
+    <div class="info-box">
+        <p><em>This page was generated on {{ ansible_date_time.iso8601 }} by Ansible running on {{ ansible_hostname }}</em></p>
+    </div>
+</body>
+</html> 

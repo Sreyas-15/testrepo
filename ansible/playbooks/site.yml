@@ -1,0 +1,81 @@
+---
+- name: Configure Web Servers
+  hosts: webservers
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Update system packages
+      yum:
+        name: "*"
+        state: latest
+      tags: [system, updates]
+
+    - name: Install required packages
+      yum:
+        name:
+          - httpd
+          - git
+          - curl
+          - wget
+        state: present
+      tags: [packages, web]
+
+    - name: Start and enable Apache service
+      systemd:
+        name: httpd
+        state: started
+        enabled: true
+      tags: [services, web]
+
+    - name: Create web document root
+      file:
+        path: "{{ web_server_document_root }}"
+        state: directory
+        owner: "{{ web_server_user }}"
+        group: "{{ web_server_group }}"
+        mode: "0755"
+      tags: [web, filesystem]
+
+    - name: Create custom index.html
+      template:
+        src: index.html.j2
+        dest: "{{ web_server_document_root }}/index.html"
+        owner: "{{ web_server_user }}"
+        group: "{{ web_server_group }}"
+        mode: "0644"
+      notify: restart apache
+      tags: [web, content]
+
+    - name: Create info.html with system information
+      template:
+        src: info.html.j2
+        dest: "{{ web_server_document_root }}/info.html"
+        owner: "{{ web_server_user }}"
+        group: "{{ web_server_group }}"
+        mode: "0644"
+      tags: [web, content]
+
+    - name: Configure firewall for HTTP
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+        immediate: yes
+      tags: [firewall, security]
+      ignore_errors: yes # In case firewalld is not installed
+
+    - name: Ensure Apache is running and accessible
+      uri:
+        url: "http://{{ ansible_default_ipv4.address }}"
+        method: GET
+        status_code: 200
+      delegate_to: localhost
+      become: false
+      tags: [validation, web]
+
+  handlers:
+    - name: restart apache
+      systemd:
+        name: httpd
+        state: restarted
